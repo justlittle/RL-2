@@ -31,14 +31,23 @@ class Actor:
 
         # Add hidden layers
         net = layers.Dense(units=256, activation=None,kernel_regularizer=layers.regularizers.l2(1e-6))(states)
+        #net = layers.Dense(units=256, activation=None)(net)
         net = layers.BatchNormalization()(net)
         net = layers.Activation('relu')(net)
 
+        
         net = layers.Dense(units=128, activation=None,kernel_regularizer=layers.regularizers.l2(1e-6))(net)
+        #net = layers.Dense(units=128, activation=None)(net)
         net = layers.BatchNormalization()(net)
         net = layers.Activation('relu')(net)
-        net = layers.Dense(units=64, activation='relu',kernel_regularizer=layers.regularizers.l2(1e-6))(net)
 
+        net = layers.Dense(units=64, activation=None,kernel_regularizer=layers.regularizers.l2(1e-6))(net)
+        #net = layers.Dense(units=128, activation=None)(net)
+        net = layers.BatchNormalization()(net)
+        net = layers.Activation('relu')(net)
+
+        net = layers.Dense(units=32, activation='relu',kernel_regularizer=layers.regularizers.l2(1e-6))(net)
+        
 
         # Add final output layer with sigmoid activation
         raw_actions = layers.Dense(units=self.action_size, activation='sigmoid',
@@ -58,7 +67,7 @@ class Actor:
         # Incorporate any additional losses here (e.g. from regularizers)
 
         # Define optimizer and training function
-        optimizer = optimizers.Adam(lr=0.00001)
+        optimizer = optimizers.Adam(lr=0.0001)
         updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss)
         self.train_fn = K.function(
             inputs=[self.model.input, action_gradients, K.learning_phase()],
